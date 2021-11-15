@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSharedNotesTable extends Migration
+class CreateUserNotesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateSharedNotesTable extends Migration
      */
     public function up()
     {
-        Schema::create('shared_notes', function (Blueprint $table) {
+        Schema::create('user_notes', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('owner_user_id')->constrained(); // use it ?
             $table->foreignId('user_id')->constrained();
             $table->foreignId('note_id')->constrained();
+            $table->boolean('liked');
+            $table->boolean('shared');
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateSharedNotesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shared_notes');
+        Schema::dropIfExists('user_notes');
     }
 }

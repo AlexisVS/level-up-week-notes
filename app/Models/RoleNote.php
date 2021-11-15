@@ -9,11 +9,15 @@ class RoleNote extends Model
 {
     use HasFactory;
 
-    public function notes() {
-        return $this->belongsToMany(Notes::class, 'role_note_notes');
+    // role_notes->notes
+    public function notes()
+    {
+        return $this->belongsToMany(Notes::class, 'role_note_notes', 'role_note_id', 'note_id');
     }
 
-    public function users() {
-        return $this->belongsToMany(User::class, 'role_note_notes');
+    // role_notes->users
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'role_note_notes', 'role_note_id', 'user_id');
     }
 }

@@ -9,19 +9,22 @@ class Note extends Model
 {
     use HasFactory;
 
-    public function roleNotes() {
-        return $this->belongsToMany(RoleNote::class, 'role_note_notes');
-    }
-
+    // user_notes->users
     public function users() {
-        return $this->belongsToMany(User::class, 'role_note_notes');
+        return $this->belongsToMany(User::class, 'user_notes', 'note_id', 'user_id');
     }
 
-    public function userLikedNotes () {
-        return $this->belongsToMany(User::class, 'liked_notes');
+    public function tags() {
+        return $this->belongsToMany(Tag::class, 'tag_notes','note_id', 'tag_id');
     }
 
-    public function sharedNotesUser() {
-        return $this->belongsToMany(User::class, 'shared_notes');
+    // role_notes->roles
+    public function roleNotesRoles() {
+        return $this->belongsToMany(RoleNote::class,'role_note_notes', 'note_id', 'role_note_id');
+    }
+
+    // role_notes->users
+    public function roleNoteUsers() {
+        return $this->belongsToMany(User::class, 'role_note_notes', 'note_id', 'user_id');
     }
 }

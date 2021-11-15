@@ -42,27 +42,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function roles () {
-        return $this->belongsToMany(Role::class, 'role_user');
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
     }
 
-    public function notes () {
-        return $this->belongsToMany(Note::class, 'role_note_notes');
+    public function notes()
+    {
+        return $this->belongsToMany(Note::class, 'user_notes', 'user_id', 'note_id');
+    }
+    // role_notes->roles
+    public function roleNotesRoles()
+    {
+        return $this->belongsToMany(RoleNote::class, 'role_note_notes', 'user_id', 'role_note_id');
     }
 
-    public function roleNotes () {
-        return $this->belongsToMany(RoleNote::class, 'role_note_notes');
-    }
-
-    public function likedNotes () {
-        return $this->belongsToMany(LikedNote::class, 'liked_notes');
-    }
-
-    public function sharedNotes () {
-        return $this->belongsToMany(Note::class, 'shared_notes');
-    }
-
-    public function tags () {
-        return $this->belongsToMany(Tag::class, 'note_tags');
+    // role_notes->notes
+    public function roleNotesNotes()
+    {
+        return $this->belongsToMany(Note::class, 'role_note_notes', 'user_id', 'note_id');
     }
 }
