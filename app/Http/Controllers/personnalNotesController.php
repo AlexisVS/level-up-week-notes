@@ -7,7 +7,9 @@ use App\Models\RoleNote;
 use App\Models\RoleNoteNote;
 use App\Models\Tag;
 use App\Models\TagNote;
+use App\Models\User;
 use App\Models\UserNote;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class personnalNotesController extends Controller
@@ -19,8 +21,16 @@ class personnalNotesController extends Controller
      */
     public function index()
     {
+        $notesQueried = collect([]);
+        $notes = Note::all();
+        foreach ($notes as $note) {
+            if ($note->users->first()->id == auth()->user()->id) {
+                $notesQueried->push($note);
+            }
+        }
+
         $data = [
-            "notes" => Note::all(),
+            "notes" => $notesQueried,
             "tags" => Tag::all(),
         ];
 
@@ -141,5 +151,35 @@ class personnalNotesController extends Controller
         Note::destroy($id);
 
         return redirect('/personnal-note')->with('success', 'Your note has been successfully destroyed.');
+    }
+
+    public function share (Request $request, $noteId) {
+        $request->validate([
+            "share" => 'required|email',
+        ]);
+
+        $userShared = User::all()->where('email', $request->share)->first();
+        if ($userShared ?? false != null) {
+            $userNote = UserNote::all()->where('note_id', $noteId)->where('user_id', $userShared->id)->first();
+        } else {
+            dd('problem');
+            return redirect('/personnal-note')->with('error', 'A probleme has been encountered during the process.');
+        }
+        if ($userNote ?? false != null) {
+            $userNote->shared = 1;
+            $userNote->save();
+            // dd($userNote);
+        } else {
+            $newUserNote = new UserNote();
+            $newUserNote->user_id = $userShared->id;
+            $newUserNote->note_id = $noteId;
+            $newUserNote->liked = 0;
+            $newUserNote->shared = 1;
+            $newUserNote->save();
+        }
+
+        dd($userNote , $newUserNote ?? ' pas de user note');
+
+        return redirect('/personnal-note')->with('success', 'Your note has been successfully shared to ' . $request->share . '.');
     }
 }

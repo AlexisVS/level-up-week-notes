@@ -17,4 +17,8 @@
     delete="true"
   />
 
+  <x-form.form title="Share your note with another people" action="/personnal-note/share/{{ $show->id }}" method="post" class="flex items-center space-x-4">
+    <x-form.text name="share" placeholder="Enter email" />
+  </x-form.form>
+
 </x-guest-layout>

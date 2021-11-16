@@ -20,9 +20,7 @@
   /> --}}
 
   <div class="grid grid-cols-3 gap-3">
-
     @foreach ($notes as $note)
-    {{-- {{ dd($note->users->first()->pivot->liked) }} --}}
     <a href="/personnal-note/{{ $note->id }}">
       <x-card.card user-id="{{ $note->users->first()->id }}" user-name="{{ $note->users->first()->name }}" title="{{ $note->title}}" description="{{ $note->description }}" />
     </a>

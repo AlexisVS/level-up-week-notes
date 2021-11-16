@@ -26,6 +26,7 @@ Route::resource('/global-note', GlobalNotesController::class);
 
 Route::resource('/liked-note', likedNotesController::class);
 Route::resource('/personnal-note', personnalNotesController::class);
+Route::post('/personnal-note/share/{noteId}', [personnalNotesController::class, 'share']);
 Route::resource('/shared-note', sharedNotesController::class);
 Route::resource('/tag-note', tagsNotesController::class );
 
