@@ -64,7 +64,7 @@ class personnalNotesController extends Controller
         $store->description = $request->description;
         $store->save();
 
-        foreach (collect($request->tag)->collapse() as $tag) {
+        foreach (collect($request->tag)->take(3)->collapse() as $tag) {
             $storeTag = new Tag();
             $storeTag->name = $tag;
             $storeTag->save();
@@ -162,7 +162,6 @@ class personnalNotesController extends Controller
         if ($userShared ?? false != null) {
             $userNote = UserNote::all()->where('note_id', $noteId)->where('user_id', $userShared->id)->first();
         } else {
-            dd('problem');
             return redirect('/personnal-note')->with('error', 'A probleme has been encountered during the process.');
         }
         if ($userNote ?? false != null) {
@@ -178,7 +177,13 @@ class personnalNotesController extends Controller
             $newUserNote->save();
         }
 
-        dd($userNote , $newUserNote ?? ' pas de user note');
+        $roleNote = new RoleNoteNote([
+            'role_note_id' => 2,
+            'note_id' => $noteId,
+            'user_id' => $userShared->id,
+        ]);
+
+        $roleNote->save();
 
         return redirect('/personnal-note')->with('success', 'Your note has been successfully shared to ' . $request->share . '.');
     }

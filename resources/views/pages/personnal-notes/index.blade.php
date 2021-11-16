@@ -22,7 +22,7 @@
   <div class="grid grid-cols-3 gap-3">
     @foreach ($notes as $note)
     <a href="/personnal-note/{{ $note->id }}">
-      <x-card.card user-id="{{ $note->users->first()->id }}" user-name="{{ $note->users->first()->name }}" title="{{ $note->title}}" description="{{ $note->description }}" />
+      <x-card.card user-id="{{ $note->users->first()->id }}" user-name="{{ $note->users->first()->name }}" title="{{ $note->title}}" description="{{ $note->description }}" :tags="$note->tags->pluck('name')" />
     </a>
     @endforeach
   </div>
