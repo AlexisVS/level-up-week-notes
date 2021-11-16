@@ -11,7 +11,7 @@ class Note extends Model
 
     // user_notes->users
     public function users() {
-        return $this->belongsToMany(User::class, 'user_notes', 'note_id', 'user_id');
+        return $this->belongsToMany(User::class, 'user_notes', 'note_id', 'user_id')->withPivot(['liked', 'shared']);
     }
 
     public function tags() {

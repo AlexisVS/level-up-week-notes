@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
+use App\Models\RoleNote;
+use App\Models\RoleNoteNote;
+use App\Models\Tag;
+use App\Models\TagNote;
+use App\Models\UserNote;
 use Illuminate\Http\Request;
 
 class personnalNotesController extends Controller
@@ -13,7 +19,12 @@ class personnalNotesController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            "notes" => Note::all(),
+            "tags" => Tag::all(),
+        ];
+
+        return view('pages.personnal-notes.index', $data);
     }
 
     /**
@@ -23,7 +34,11 @@ class personnalNotesController extends Controller
      */
     public function create()
     {
-        //
+        $data = [
+            'tags' => Tag::all(),
+        ];
+
+        return view('pages.personnal-notes.create', $data);
     }
 
     /**
@@ -34,7 +49,34 @@ class personnalNotesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $store = new Note();
+        $store->title = $request->title;
+        $store->description = $request->description;
+        $store->save();
+
+        foreach (collect($request->tag)->collapse() as $tag) {
+            $storeTag = new Tag();
+            $storeTag->name = $tag;
+            $storeTag->save();
+
+            $tagNote = new TagNote();
+            $tagNote->tag_id = $storeTag->id;
+            $tagNote->note_id = $store->id;
+            $tagNote->save();
+        }
+
+        $store->users()->attach(auth()->user()->id,[
+            "liked" => 0,
+            "shared" => 0,
+        ]);
+
+        $roleNote = new RoleNoteNote();
+        $roleNote->note_id = $store->id;
+        $roleNote->role_note_id = 1;
+        $roleNote->user_id = auth()->user()->id;
+        $roleNote->save();
+
+        return redirect('/personnal-note')->with('success', 'Note was successfully created.');
     }
 
     /**
@@ -45,7 +87,11 @@ class personnalNotesController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = [
+            "show" => Note::find($id),
+        ];
+
+        return view('pages.personnal-notes.show', $data);
     }
 
     /**
@@ -56,7 +102,12 @@ class personnalNotesController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = [
+            "edit" => Note::find($id),
+            "tags" => Tag::all(),
+        ];
+
+        return view('pages.personnal-notes.edit', $data);
     }
 
     /**
@@ -68,7 +119,13 @@ class personnalNotesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $update = Note::find($id);
+
+        $update->title = $request->title;
+        $update->description = $request->description;
+        $update->save();
+
+        return redirect('/personnal-note')->with('success', 'Note was successfully updated.');
     }
 
     /**
@@ -79,6 +136,10 @@ class personnalNotesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        TagNote::where('note_id', $id)->delete();
+        UserNote::where('note_id', $id)->delete();
+        Note::destroy($id);
+
+        return redirect('/personnal-note')->with('success', 'Your note has been successfully destroyed.');
     }
 }

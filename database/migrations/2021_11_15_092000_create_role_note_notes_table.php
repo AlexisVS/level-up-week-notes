@@ -16,7 +16,7 @@ class CreateRoleNoteNotesTable extends Migration
         Schema::create('role_note_notes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('role_note_id')->constrained();
-            $table->foreignId('note_id')->constrained();
+            $table->foreignId('note_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
