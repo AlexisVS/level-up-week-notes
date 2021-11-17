@@ -53,13 +53,14 @@
       @else
       <form method="POST" action="{{ route('logout') }}">
         @csrf
-        <button  type="submit" class="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-gray-400 items-center justify-center hover:bg-gray-900 hover:text-white">
+        <button type="submit" class="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-gray-400 items-center justify-center hover:bg-gray-900 hover:text-white">
           <span>Logout</span>
         </button>
       </form>
       @endif
-
-      <p class="text-white">{{ auth()->user()->email . ' | id: ' . auth()->user()->id . ' | name: ' . auth()->user()->name }}</p>
+      @if(auth()->check())
+      <p class="text-white text-xs">{{ auth()->user()->email . ' | id: ' . auth()->user()->id . ' | name: ' . auth()->user()->name }}</p>
+      @endif
     </div>
   </div>
 </nav>

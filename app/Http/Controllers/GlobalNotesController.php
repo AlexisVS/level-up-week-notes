@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
+use App\Models\Tag;
 use App\Models\UserNote;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class GlobalNotesController extends Controller
 {
@@ -15,8 +18,15 @@ class GlobalNotesController extends Controller
      */
     public function index()
     {
+        $notes = QueryBuilder::for(Note::class)
+        ->allowedFilters(['tags.id'])
+        ->with('tags')
+        ->allowedIncludes(['tags'])
+        ->get();
+
         $data = [
-            "notes" => Note::all(),
+            "notes" => $notes,
+            "tags" => Tag::all(),
             "userNotes" => UserNote::all(),
         ];
 
