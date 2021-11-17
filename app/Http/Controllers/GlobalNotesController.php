@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
+use App\Models\UserNote;
 use Illuminate\Http\Request;
 
 class GlobalNotesController extends Controller
@@ -13,7 +15,12 @@ class GlobalNotesController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            "notes" => Note::all(),
+            "userNotes" => UserNote::all(),
+        ];
+
+        return view('pages.global-note.index', $data);
     }
 
     /**
@@ -80,5 +87,35 @@ class GlobalNotesController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function like($noteId)
+    {
+        $note = UserNote::all()->where('note_id', $noteId)->where('user_id', auth()->user()->id);
+        if ($note->count() == 0) {
+            $userNote = new UserNote([
+                "user_id" => auth()->user()->id,
+                "note_id" => $noteId,
+                // pas de role_note_id
+                "author_id" => Note::find($noteId)->user_id,
+                "liked" => 1,
+                "shared" => 0,
+            ]);
+            $userNote->save();
+        } else {
+            $note->first()->liked = 1;
+            $note->first()->save();
+        }
+
+        return redirect("/global-note")->with('success', 'Your like has been added.');
+    }
+
+    public function unlike($noteId)
+    {
+        $note = UserNote::all()->where('note_id', $noteId)->where('user_id', auth()->user()->id);
+        $note->first()->liked = 0;
+        $note->first()->save();
+
+        return redirect("/global-note")->with('success', 'Your like has been removed.');
     }
 }

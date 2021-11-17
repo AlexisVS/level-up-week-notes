@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class sharedNotesController extends Controller
@@ -13,7 +15,14 @@ class sharedNotesController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            "notes" =>  Note::whereRelation('users', [
+                ['author_id', '=', auth()->user()->id],
+                ['shared', '=', 1],
+            ])->get(),
+        ];
+
+        return view('pages.shared-note.index', $data);
     }
 
     /**

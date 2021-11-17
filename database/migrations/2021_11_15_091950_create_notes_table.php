@@ -17,6 +17,7 @@ class CreateNotesTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

@@ -42,6 +42,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function createdNotes() {
+        return $this->hasMany(Note::class, 'user_id');
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_users', 'user_id', 'role_id');
@@ -51,15 +55,19 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Note::class, 'user_notes', 'user_id', 'note_id');
     }
-    // role_notes->roles
-    public function roleNotesRoles()
-    {
-        return $this->belongsToMany(RoleNote::class, 'role_note_notes', 'user_id', 'role_note_id');
+
+    public function author() {
+        return $this->hasOne(UserNote::class, null, 'author_id');
     }
+    // // role_notes->roles
+    // public function roleNotesRoles()
+    // {
+    //     return $this->belongsToMany(RoleNote::class, 'role_note_notes', 'user_id', 'role_note_id');
+    // }
 
     // role_notes->notes
-    public function roleNotesNotes()
-    {
-        return $this->belongsToMany(Note::class, 'role_note_notes', 'user_id', 'note_id');
-    }
+    // public function roleNotesNotes()
+    // {
+    //     return $this->belongsToMany(Note::class, 'role_note_notes', 'user_id', 'note_id');
+    // }
 }

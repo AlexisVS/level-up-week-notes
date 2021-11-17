@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
 use Illuminate\Http\Request;
 
 class likedNotesController extends Controller
@@ -13,7 +14,14 @@ class likedNotesController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            "notes" => Note::whereRelation('users', [
+                ["user_id", '=', auth()->user()->id],
+                ["liked" ,'=', 1],
+            ])->get(),
+        ];
+
+        return view('pages.liked-note.index', $data);
     }
 
     /**

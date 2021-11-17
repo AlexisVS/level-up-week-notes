@@ -21,20 +21,14 @@ class personnalNotesController extends Controller
      */
     public function index()
     {
-        $notesQueried = collect([]);
-        $notes = Note::all();
-        foreach ($notes as $note) {
-            if ($note->users->first()->id == auth()->user()->id) {
-                $notesQueried->push($note);
-            }
-        }
+
 
         $data = [
-            "notes" => $notesQueried,
+            "notes" => Note::all()->where('user_id', auth()->user()->id),
             "tags" => Tag::all(),
         ];
 
-        return view('pages.personnal-notes.index', $data);
+        return view('pages.personnal-note.index', $data);
     }
 
     /**
@@ -48,7 +42,7 @@ class personnalNotesController extends Controller
             'tags' => Tag::all(),
         ];
 
-        return view('pages.personnal-notes.create', $data);
+        return view('pages.personnal-note.create', $data);
     }
 
     /**
@@ -62,15 +56,13 @@ class personnalNotesController extends Controller
         $store = new Note();
         $store->title = $request->title;
         $store->description = $request->description;
+        $store->user_id = auth()->user()->id;
         $store->save();
+        $store->refresh();
 
-        foreach (collect($request->tag)->take(3)->collapse() as $tag) {
-            $storeTag = new Tag();
-            $storeTag->name = $tag;
-            $storeTag->save();
-
+        foreach (collect($request->tag)->take(3) as $tag) {
             $tagNote = new TagNote();
-            $tagNote->tag_id = $storeTag->id;
+            $tagNote->tag_id = $tag;
             $tagNote->note_id = $store->id;
             $tagNote->save();
         }
@@ -78,13 +70,10 @@ class personnalNotesController extends Controller
         $store->users()->attach(auth()->user()->id,[
             "liked" => 0,
             "shared" => 0,
+            "role_note_id" => 1,
+            "author_id" => auth()->user()->id,
         ]);
 
-        $roleNote = new RoleNoteNote();
-        $roleNote->note_id = $store->id;
-        $roleNote->role_note_id = 1;
-        $roleNote->user_id = auth()->user()->id;
-        $roleNote->save();
 
         return redirect('/personnal-note')->with('success', 'Note was successfully created.');
     }
@@ -101,7 +90,7 @@ class personnalNotesController extends Controller
             "show" => Note::find($id),
         ];
 
-        return view('pages.personnal-notes.show', $data);
+        return view('pages.personnal-note.show', $data);
     }
 
     /**
@@ -117,7 +106,7 @@ class personnalNotesController extends Controller
             "tags" => Tag::all(),
         ];
 
-        return view('pages.personnal-notes.edit', $data);
+        return view('pages.personnal-note.edit', $data);
     }
 
     /**
@@ -130,10 +119,17 @@ class personnalNotesController extends Controller
     public function update(Request $request, $id)
     {
         $update = Note::find($id);
-
         $update->title = $request->title;
         $update->description = $request->description;
         $update->save();
+
+        foreach ($update->tags as $tag) {
+            $update->tags()->detach($tag->id);
+        }
+
+        foreach (collect($request->tag)->take(3) as $tag) {
+            $update->tags()->attach($tag);
+        }
 
         return redirect('/personnal-note')->with('success', 'Note was successfully updated.');
     }
@@ -153,6 +149,13 @@ class personnalNotesController extends Controller
         return redirect('/personnal-note')->with('success', 'Your note has been successfully destroyed.');
     }
 
+    /**
+     * Share with another person the specified model.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function share (Request $request, $noteId) {
         $request->validate([
             "share" => 'required|email',
@@ -166,24 +169,19 @@ class personnalNotesController extends Controller
         }
         if ($userNote ?? false != null) {
             $userNote->shared = 1;
+            $userNote->role_note_id = 2;
             $userNote->save();
             // dd($userNote);
         } else {
             $newUserNote = new UserNote();
             $newUserNote->user_id = $userShared->id;
             $newUserNote->note_id = $noteId;
+            $newUserNote->role_note_id = 2;
             $newUserNote->liked = 0;
             $newUserNote->shared = 1;
+            $newUserNote->author_id = Note::find($noteId)->author->id;
             $newUserNote->save();
         }
-
-        $roleNote = new RoleNoteNote([
-            'role_note_id' => 2,
-            'note_id' => $noteId,
-            'user_id' => $userShared->id,
-        ]);
-
-        $roleNote->save();
 
         return redirect('/personnal-note')->with('success', 'Your note has been successfully shared to ' . $request->share . '.');
     }

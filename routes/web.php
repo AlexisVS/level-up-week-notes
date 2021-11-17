@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\GlobalNotesController;
 use App\Http\Controllers\likedNotesController;
 use App\Http\Controllers\personnalNotesController;
@@ -23,12 +24,20 @@ Route::get('/', function () {
 });
 
 Route::resource('/global-note', GlobalNotesController::class);
+Route::put('/global-note/like/{noteId}', [GlobalNotesController::class, 'like']);
+Route::put('/global-note/unlike/{noteId}', [GlobalNotesController::class, 'unlike']);
 
 Route::resource('/liked-note', likedNotesController::class);
+
 Route::resource('/personnal-note', personnalNotesController::class);
+
 Route::post('/personnal-note/share/{noteId}', [personnalNotesController::class, 'share']);
+
 Route::resource('/shared-note', sharedNotesController::class);
+
 Route::resource('/tag-note', tagsNotesController::class );
+
+Route::post('/log-out', [LogoutController::class, 'logout']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
