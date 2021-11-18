@@ -4,16 +4,21 @@
   <div class="w-full flex items-center justify-between">
     <p class="text-sm font-semibold">{{ $userName }}</p>
 
-    <div class="w-5 h-5">
+    <div class="flex space-x-1">
       {{ $status ?? null }}
     </div>
 
   </div>
 
-  <h3 class="font mb-2 font-semibold text-lg">{{ $title }}</h3>
+  <h3 class="font mb-2 font-semibold text-lg">{!! $title !!}</h3>
   {{-- Body --}}
   <div class="w-full flex flex-col items-center justify-center">
-    <p class="text-gray-800 w-full break-words">{{ Str::limit($description, 110) }}</p>
+    <p class="text-gray-800 w-full break-words">
+      @php
+      $text = $description;
+        echo $text;
+      @endphp
+    </p>
   </div>
 
   {{-- Footer --}}

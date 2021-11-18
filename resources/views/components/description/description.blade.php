@@ -75,6 +75,19 @@
           <img class="max-w-xs max-h-32" src="{{ asset($imagePath . (substr($imagePath, -1) != '/' ? '/' : '') . $row->$column)}}" alt="">
         </dd>
       </div>
+      @elseif (Str::contains($column, ['description']) == true)
+      <div class="{{ $loop->iteration % 2 == 1 ? 'bg-gray-50' : 'bg-white' }} px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-400">
+          @php
+          echo str_replace('_', ' ', $column ?? '')
+          @endphp
+        </dt>
+        <dd class="mt-1 text-sm text-gray-400 sm:mt-0 sm:col-span-2">
+          @php
+            echo $row->$column 
+          @endphp
+        </dd>
+      </div>
       @else
 
       <div class="{{ $loop->iteration % 2 == 1 ? 'bg-gray-50' : 'bg-white' }} px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

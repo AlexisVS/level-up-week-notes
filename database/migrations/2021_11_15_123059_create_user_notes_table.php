@@ -17,8 +17,8 @@ class CreateUserNotesTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onUpdate('cascade');
             $table->foreignId('note_id')->constrained()->onUpdate('cascade');
-            $table->foreignId('role_note_id')->unsigned()->constrained()->onUpdate('cascade')->nullable();
-            $table->foreignId('author_id')->constrained('users')->onUpdate('cascade')->nullable();
+            $table->foreignId('role_note_id')->unsigned()->nullable()->constrained()->onUpdate('cascade');
+            $table->foreignId('author_id')->constrained('users')->onUpdate('cascade');
             $table->boolean('liked');
             $table->boolean('shared');
             $table->timestamps();

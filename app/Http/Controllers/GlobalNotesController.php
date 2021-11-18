@@ -106,7 +106,7 @@ class GlobalNotesController extends Controller
             $userNote = new UserNote([
                 "user_id" => auth()->user()->id,
                 "note_id" => $noteId,
-                // pas de role_note_id
+                "role_note_id" => null,
                 "author_id" => Note::find($noteId)->user_id,
                 "liked" => 1,
                 "shared" => 0,
