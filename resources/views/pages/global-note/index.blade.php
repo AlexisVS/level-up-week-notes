@@ -6,19 +6,20 @@
 
   </div>
 
-  @if ($notes->count())
-  <div class="fixed right-0 top-1/2 transform -translate-y-1/2">
+  <div class="">
+    <h2 class="mb-3 text-2xl font-black">Tags</h2>
     <x-tags.tags :tags="$tags"/>
   </div>
+  @if ($notes->count())
   <div class="flex">
 
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 2xl:grid-cols-3 justify-items-center">
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3 justify-items-center">
       @foreach ($notes as $note)
       {{-- {{ dd($note->users->where('pivot.liked', '!=', 1)->where('pivot.user_id', auth()->user()->id)) }} --}}
       <a href="/personnal-note/{{ $note->id }}">
         <x-card.card user-id="{{ $note->user_id }}" user-name="{{ $note->author->name }}" title="{{ $note->title}}" description="{{ $note->description }}" :tags="$note->tags->pluck('name')">
           <x-slot name="status">
-            <p class="text-sm text-gray-600 mr-2">{{ $userNotes->where('note_id', $note->id)->where('liked', 1)->count() }}</p>
+            <p class="text-sm text-gray-600 mr-2">like: {{ $userNotes->where('note_id', $note->id)->where('liked', 1)->count() }}</p>
             @if(auth()->check())
             @if( $note->users->where('pivot.author_id', '=', auth()->user()->id)->count())
             @elseif ($note->users->where('pivot.liked', '=', 1)->where('pivot.user_id', auth()->user()->id)->count())

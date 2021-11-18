@@ -84,7 +84,7 @@
         </dt>
         <dd class="mt-1 text-sm text-gray-400 sm:mt-0 sm:col-span-2">
           @php
-            echo $row->$column 
+            echo $row->$column;
           @endphp
         </dd>
       </div>

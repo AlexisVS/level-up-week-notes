@@ -4,7 +4,7 @@
 
     <x-front.title title="Note {{ $show->title }}"/>
 
-    <x-front.link uri="/personnal-note/create" text="Note {{ $show->title }}" />
+    {{-- <x-front.link uri="/personnal-note/create" text="Note {{ $show->title }}" /> --}}
 
   </div>
   

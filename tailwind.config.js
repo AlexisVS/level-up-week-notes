@@ -18,7 +18,6 @@ module.exports = {
     variants: {
         extend: {
             opacity: ['disabled'],
-            marginTop: ['first'],
             margin:['first'],
         },
     },

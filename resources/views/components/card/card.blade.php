@@ -1,4 +1,4 @@
-<div class="m-3 p-3 flex flex-wrap w-80 justify-center content-between rounded-xl shadow-lg border border-1 {{'bg-' . Arr::random(['red', 'blue', 'green', 'yellow', 'purple', 'indigo', 'pink']) . '-50' }} border-gray-400 h-44 transform transition-all duration-500 hover:shadow-2xl hover:-translate-y-3">
+<div class="m-3 p-3 h-full flex flex-wrap w-80 justify-center content-start rounded-xl shadow-lg border border-1 {{'bg-' . Arr::random(['red', 'blue', 'green', 'yellow', 'purple', 'indigo', 'pink']) . '-50' }} border-gray-400 transform transition-all duration-500 hover:shadow-2xl hover:-translate-y-3">
 
   {{-- Head --}}
   <div class="w-full flex items-center justify-between">
@@ -15,14 +15,13 @@
   <div class="w-full flex flex-col items-center justify-center">
     <p class="text-gray-800 w-full break-words">
       @php
-      $text = $description;
-        echo $text;
+      echo html_entity_decode($description);
       @endphp
     </p>
   </div>
 
   {{-- Footer --}}
-  <div class="w-full flex flex-wrap space-x-3 space-y-1 items-center first:mt-3">
+  <div class="absolute bottom-3 transform  flex flex-wrap space-x-3 items-center first:mt-4">
     @foreach($tags as $tag)
     <x-card.pills text="{{ $tag }}" />
     @endforeach
