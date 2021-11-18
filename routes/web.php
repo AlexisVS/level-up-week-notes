@@ -6,6 +6,7 @@ use App\Http\Controllers\likedNotesController;
 use App\Http\Controllers\personnalNotesController;
 use App\Http\Controllers\sharedNotesController;
 use App\Http\Controllers\tagsNotesController;
+use App\Models\Note;
 use Illuminate\Support\Facades\Route;
 
 /*

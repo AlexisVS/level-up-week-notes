@@ -23,6 +23,10 @@ class Note extends Model
         return $this->belongsToMany(Tag::class, 'tag_notes','note_id', 'tag_id');
     }
 
+    public function liked() {
+        return $this->belongsToMany(User::class)->wherePivot('liked', '=', 1);
+    }
+
     // // role_notes->roles
     // public function roleNotesRoles() {
     //     return $this->belongsToMany(RoleNote::class,'role_note_notes', 'note_id', 'role_note_id');

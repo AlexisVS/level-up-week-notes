@@ -12,6 +12,13 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 class GlobalNotesController extends Controller
 {
+
+    public function __construct()
+    {
+        // $this->authorizeResource(Note::class);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -19,16 +26,12 @@ class GlobalNotesController extends Controller
      */
     public function index()
     {
-        // $modelNotes = Note::orderByDesc(
-        //     UserNote::select('liked')
-        //     ->whereColumn([['liked', 1]])
-        //     ->orderByDesc('liked')
-        // )->get();
-
-        // dd($modelNotes);
-
+        $noteOrderedByLikes = Note::with('users')->withSum('users','user_notes.liked')->get()->sortByDesc(function ($item) {
+            return $item->users_sum_user_notesliked;
+        })->pluck('id');
 
         $notes = QueryBuilder::for(Note::class)
+        ->whereIn('id', $noteOrderedByLikes)
         ->allowedFilters(['tags.id'])
         // ->with('tags')
         ->allowedIncludes(['tags'])
