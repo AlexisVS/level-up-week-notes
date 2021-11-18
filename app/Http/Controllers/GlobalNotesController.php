@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Note;
 use App\Models\Tag;
 use App\Models\UserNote;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -18,9 +19,18 @@ class GlobalNotesController extends Controller
      */
     public function index()
     {
+        // $modelNotes = Note::orderByDesc(
+        //     UserNote::select('liked')
+        //     ->whereColumn([['liked', 1]])
+        //     ->orderByDesc('liked')
+        // )->get();
+
+        // dd($modelNotes);
+
+
         $notes = QueryBuilder::for(Note::class)
         ->allowedFilters(['tags.id'])
-        ->with('tags')
+        // ->with('tags')
         ->allowedIncludes(['tags'])
         ->get();
 
