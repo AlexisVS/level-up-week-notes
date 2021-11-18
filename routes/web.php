@@ -19,28 +19,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
+Route::get('/', [GlobalNotesController::class, 'index'])->middleware(['blockMobileDevice']);
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::resource('/global-note', GlobalNotesController::class)->except('index');
+    Route::put('/global-note/like/{noteId}', [GlobalNotesController::class, 'like']);
+    Route::put('/global-note/unlike/{noteId}', [GlobalNotesController::class, 'unlike']);
+    
+    Route::resource('/liked-note', likedNotesController::class)->middleware(['blockMobileDevice']);
+    
+    Route::resource('/personnal-note', personnalNotesController::class);
+    
+    Route::post('/personnal-note/share/{noteId}', [personnalNotesController::class, 'share']);
+    
+    Route::resource('/shared-note', sharedNotesController::class);
+    
+    Route::resource('/tag-note', tagsNotesController::class );
+    
+    Route::post('/log-out', [LogoutController::class, 'logout']);
+    
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 });
-
-Route::resource('/global-note', GlobalNotesController::class);
-Route::put('/global-note/like/{noteId}', [GlobalNotesController::class, 'like']);
-Route::put('/global-note/unlike/{noteId}', [GlobalNotesController::class, 'unlike']);
-
-Route::resource('/liked-note', likedNotesController::class);
-
-Route::resource('/personnal-note', personnalNotesController::class);
-
-Route::post('/personnal-note/share/{noteId}', [personnalNotesController::class, 'share']);
-
-Route::resource('/shared-note', sharedNotesController::class);
-
-Route::resource('/tag-note', tagsNotesController::class );
-
-Route::post('/log-out', [LogoutController::class, 'logout']);
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
 
 require __DIR__ . '/auth.php';

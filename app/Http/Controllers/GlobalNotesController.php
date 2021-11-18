@@ -117,7 +117,7 @@ class GlobalNotesController extends Controller
             $note->first()->save();
         }
 
-        return redirect("/global-note")->with('success', 'Your like has been added.');
+        return redirect("/")->with('success', 'Your like has been added.');
     }
 
     public function unlike($noteId)
@@ -126,6 +126,6 @@ class GlobalNotesController extends Controller
         $note->first()->liked = 0;
         $note->first()->save();
 
-        return redirect("/global-note")->with('success', 'Your like has been removed.');
+        return redirect("/")->with('success', 'Your like has been removed.');
     }
 }
