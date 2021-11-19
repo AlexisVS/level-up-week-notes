@@ -7,6 +7,7 @@ use App\Models\Tag;
 use App\Models\UserNote;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -28,12 +29,10 @@ class GlobalNotesController extends Controller
     {
         $noteOrderedByLikes = Note::with('users')->withSum('users','user_notes.liked')->get()->sortByDesc(function ($item) {
             return $item->users_sum_user_notesliked;
-        })->pluck('id');
+        })->pluck('id')->toArray();
 
-        $notes = QueryBuilder::for(Note::class)
-        ->whereIn('id', $noteOrderedByLikes)
+        $notes = QueryBuilder::for(Note::whereIn('id', $noteOrderedByLikes))
         ->allowedFilters(['tags.id'])
-        // ->with('tags')
         ->allowedIncludes(['tags'])
         ->get();
 
