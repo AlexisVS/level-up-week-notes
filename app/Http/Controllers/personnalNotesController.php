@@ -87,6 +87,7 @@ class personnalNotesController extends Controller
     public function show($id)
     {
         $data = [
+            "userNotes" => UserNote::all(),
             "show" => Note::find($id),
         ];
 

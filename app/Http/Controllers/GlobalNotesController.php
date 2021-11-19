@@ -27,14 +27,17 @@ class GlobalNotesController extends Controller
      */
     public function index()
     {
-        $noteOrderedByLikes = Note::with('users')->withSum('users','user_notes.liked')->get()->sortByDesc(function ($item) {
+        $noteOrderedByLikes = Note::with('users')->withSum('users', 'user_notes.liked')->get()->sortByDesc(function ($item) {
             return $item->users_sum_user_notesliked;
-        })->pluck('id')->toArray();
+        });
 
-        $notes = QueryBuilder::for(Note::whereIn('id', $noteOrderedByLikes))
-        ->allowedFilters(['tags.id'])
-        ->allowedIncludes(['tags'])
-        ->get();
+        if (request()->query('tagId')) {
+            $notes = $noteOrderedByLikes->filter(function ($item) {
+                return $item->tags->where('id', request()->query('tagId'))->count() > 0;
+            });
+        } else {
+            $notes = $noteOrderedByLikes;
+        }
 
         $data = [
             "notes" => $notes,
